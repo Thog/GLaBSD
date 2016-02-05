@@ -1,16 +1,15 @@
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
 #include <stdio.h>
-
+#include <kernel/arch.h>
 #include <kernel/tty.h>
-#include <kernel/types.h>
-void kernel_early(void)
+
+void kernel_early (void)
 {
-	terminal_initialize();
+  terminal_initialize ();
+  printf ("Initializing Kernel core...\n");
+  init_arch ();
 }
 
-void kernel_main(void)
+void kernel_main (void)
 {
-	printf("Hello, I'm kernel_main!");
+  printf ("Hello, I'm kernel_main!");
 }
