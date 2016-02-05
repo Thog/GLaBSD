@@ -1,0 +1,5 @@
+*.iso
+isodir
+sysroot
+.vagrant
+.idea
