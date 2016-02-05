@@ -94,7 +94,7 @@ void init_gdt (void)
   /* load the gdtr registry */
   asm("lgdtl (kgdtr)");
 
-  /* initiliaz the segments */
+  /* initiliaze the segments */
   asm("   movw $0x10, %ax	\n \
             movw %ax, %ds	\n \
             movw %ax, %es	\n \
