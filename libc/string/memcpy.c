@@ -1,14 +1,16 @@
 #include <string.h>
 
-void *memcpy (void *restrict s1, const void *restrict s2, size_t n)
-{
-  size_t i;
 
-  i = 0;
-  while (n > i)
-    {
-      ((char *) s1)[i] = ((char *) s2)[i];
-      i++;
+void* memcpy( void* d, const void* s, size_t n ) {
+  char* dest;
+  char* src;
+
+  dest = ( char* )d;
+  src = ( char* )s;
+
+  while ( n-- ) {
+      *dest++ = *src++;
     }
-  return (s1);
+
+  return d;
 }

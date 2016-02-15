@@ -1,7 +1,5 @@
 # Declare constants used for creating a multiboot header.
-.set ALIGN,    1<<0             # align loaded modules on page boundaries
-.set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
+.set FLAGS,    0x00000003       # this is the Multiboot 'flag' field (ALIGN | MEMINFO)
 .set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
 .set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
 
@@ -14,9 +12,9 @@
 
 # The kernel entry point.
 .section .text
-.global _start
-.type _start, @function
-_start:
+.global kernel_init
+.type kernel_init, @function
+kernel_init:
 
 	# Initialize the core kernel before running the global constructors.
 	call kernel_early
@@ -32,4 +30,4 @@ _start:
 .Lhang:
 	hlt
 	jmp .Lhang
-.size _start, . - _start
+.size kernel_init, . - kernel_init

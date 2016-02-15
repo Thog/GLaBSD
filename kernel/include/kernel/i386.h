@@ -1,8 +1,14 @@
 #ifndef _KERNEL_I386_H
 #define _KERNEL_I386_H
-#define GDTSIZE	0xFF // Max descriptors in the table
+#define GDTSIZE    0xFF // Max descriptors in the table
 #define GDTBASE 0x00000800 // address of GDT
-#define	KERN_STACK 0x0009FFF0
+#define IDTBASE 0x00000000 // address of IDT
+#define IDTSIZE 0xFF // Max descriptors in the table
+#define KERN_STACK 0x0009FFF0
+
+
+#define INTGATE  0x8E00		/* used to manage interrupts calls */
+#define TRAPGATE 0xEF00		/*  used to manage system calls */
 
 #include <kernel/types.h>
 
@@ -37,9 +43,21 @@ typedef struct {
 } __attribute__ ((packed)) gdt_desc;
 
 typedef struct {
+    u16 offset0_15;
+    u16 select;
+    u16 type;
+    u16 offset16_31;
+} __attribute__ ((packed)) idt_desc;
+
+typedef struct {
     u16 limit;
     u32 base;
 } __attribute__ ((packed)) gdt_r;
+
+typedef struct {
+    u16 limit;
+    u32 base;
+} __attribute__ ((packed)) idt_r;
 
 typedef struct {
     u32 edi, esi, ebp, esp, ebx, edx, ecx, eax;
@@ -55,5 +73,13 @@ u32 cpu_vendor_name (char *str);
 // GDT init
 void init_gdt_desc (u32 base, u32 limit, u8 access, u8 other, gdt_desc *desc);
 void init_gdt (void);
+
+// IDT init
+void init_idt_desc (u16 select, u32 offset, u16 type, idt_desc *desc);
+void init_idt(void);
+
+void init_pic(void);
+
+void outb(u16 ad,u8 v);
 
 #endif //_KERNEL_I386_H

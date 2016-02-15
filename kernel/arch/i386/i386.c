@@ -1,5 +1,14 @@
 #include <kernel/i386.h>
+#include <kernel/arch.h>
 #include <string.h>
+#include <stdio.h>
+
+extern void _asm_int_0 ();
+extern void _asm_int_1 ();
+extern void _asm_syscalls ();
+extern void _asm_exc_GP (void);
+extern void _asm_exc_PF (void);
+extern void _asm_schedule ();
 
 regs_t cpu_cpuid (int code)
 {
@@ -51,6 +60,12 @@ tss default_tss;
 /* GDTR */
 gdt_r kgdtr;
 
+/* IDT table */
+idt_desc kidt[IDTSIZE];
+
+/* IDTR registry */
+idt_r kidtr;
+
 u32 *stack_ptr = 0;
 
 void init_gdt_desc (u32 base, u32 limite, u8 acces, u8 other, gdt_desc *desc)
@@ -63,6 +78,29 @@ void init_gdt_desc (u32 base, u32 limite, u8 acces, u8 other, gdt_desc *desc)
   desc->other = (other & 0xf);
   desc->base24_31 = (base & 0xff000000) >> 24;
   return;
+}
+
+void init_idt_desc (u16 select, u32 offset, u16 type, idt_desc *desc)
+{
+  desc->offset0_15 = (offset & 0xffff);
+  desc->select = select;
+  desc->type = type;
+  desc->offset16_31 = (offset & 0xffff0000) >> 16;
+}
+
+void do_syscalls (int num)
+{
+  u32 ret, ret1, ret2, ret3, ret4;
+  asm("mov %%ebx, %0": "=m"(ret):);
+  asm("mov %%ecx, %0": "=m"(ret1):);
+  asm("mov %%edx, %0": "=m"(ret2):);
+  asm("mov %%edi, %0": "=m"(ret3):);
+  asm("mov %%esi, %0": "=m"(ret4):);
+  set_arch_param (ret, ret1, ret2, ret3, ret4);
+  asm("cli");
+  asm("mov %%ebp, %0": "=m"(stack_ptr):);
+  //sys_call (num);
+  asm("sti");
 }
 
 void init_gdt (void)
@@ -103,4 +141,113 @@ void init_gdt (void)
             ljmp $0x08, $next	\n \
             next:		\n");
 
+}
+
+void init_idt (void)
+{
+  /* Init irq */
+  int i;
+  for (i = 0; i < IDTSIZE; i++)
+    init_idt_desc (0x08, (u32) _asm_schedule, INTGATE, &kidt[i]); //
+
+  /* Vectors  0 -> 31 are for exceptions */
+  init_idt_desc (0x08, (u32) _asm_exc_GP, INTGATE, &kidt[13]);     /* #GP */
+  init_idt_desc (0x08, (u32) _asm_exc_PF, INTGATE, &kidt[14]);     /* #PF */
+
+  init_idt_desc (0x08, (u32) _asm_schedule, INTGATE, &kidt[32]);
+  init_idt_desc (0x08, (u32) _asm_int_1, INTGATE, &kidt[33]);
+
+  init_idt_desc (0x08, (u32) _asm_syscalls, TRAPGATE, &kidt[48]);
+  init_idt_desc (0x08, (u32) _asm_syscalls, TRAPGATE, &kidt[128]); //48
+
+  kidtr.limit = IDTSIZE * 8;
+  kidtr.base = IDTBASE;
+
+
+  /* Copy the IDT to the memory */
+  // FIXME: Crash here
+  (char *) kidtr.base;
+  memcpy ((char *) kidtr.base, (char *) kidt, kidtr.limit);
+
+  /* Load the IDTR registry */
+  //asm("lidtl (kidtr)");
+}
+
+void outb (u16 ad, u8 v)
+{
+  asmv("outb %0, %1" : : "a"(v), "Nd"(ad));
+}
+
+void isr_default_int (int id)
+{
+  switch (id)
+    {
+      case 1:
+        //isr_kbd_int ();
+        break;
+      default:
+        return;
+    }
+  outb (0x20, 0x20);
+  outb (0xA0, 0x20);
+}
+
+void isr_PF_exc (void)
+{
+  u32 fault_addr, code;
+  u32 eip;
+  u32 stack;
+  asm(" 	movl 60(%%ebp), %%eax	\n \
+    		mov %%eax, %0		\n \
+		mov %%cr2, %%eax	\n \
+		mov %%eax, %1		\n \
+ 		movl 56(%%ebp), %%eax	\n \
+    		mov %%eax, %2"
+  : "=m"(eip), "=m"(fault_addr), "=m"(code));
+  asm("mov %%ebp, %0": "=m"(stack):);
+
+}
+
+void isr_schedule_int ()
+{
+  static int tic = 0;
+  static int sec = 0;
+  tic++;
+  if (tic % 100 == 0)
+    {
+      sec++;
+      tic = 0;
+    }
+  outb (0x20, 0x20);
+  outb (0xA0, 0x20);
+}
+
+void isr_GP_exc (void)
+{
+  printf ("\nGeneral Protection fault!\n");
+  printf ("The kernel have to be killed !\n\n");
+  asm("hlt");
+}
+
+void init_pic (void)
+{
+  /* Initialization of ICW1 */
+  outb (0x20, 0x11);
+  outb (0xA0, 0x11);
+
+  /* Initialization of ICW2 */
+  outb (0x21, 0x20);    /* start vector = 32 */
+  outb (0xA1, 0x70);    /* start vector = 96 */
+
+  /* Initialization of ICW3 */
+  outb (0x21, 0x04);
+  outb (0xA1, 0x02);
+
+  /* Initialization of ICW4 */
+  outb (0x21, 0x01);
+  outb (0xA1, 0x01);
+
+  /* mask interrupts */
+  outb (0x21, 0x0);
+  outb (0xA1, 0x0);
 }
