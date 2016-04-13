@@ -15,7 +15,6 @@
 .global kernel_init
 .type kernel_init, @function
 kernel_init:
-
 	# Initialize the core kernel before running the global constructors.
 	call kernel_early
 

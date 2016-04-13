@@ -11,5 +11,8 @@ void kernel_early (void)
 
 void kernel_main (void)
 {
-  printf ("Hello, I'm kernel_main!");
+  printf ("Hello, I'm kernel_main!\n");
+  printf("Error? %i", 12 / 0);
+  while (true) {
+  }
 }

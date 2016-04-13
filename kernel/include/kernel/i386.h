@@ -4,6 +4,7 @@
 #define GDTBASE 0x00000800 // address of GDT
 #define IDTBASE 0x00000000 // address of IDT
 #define IDTSIZE 0xFF // Max descriptors in the table
+#define IDTBYTESIZE 0x800
 #define KERN_STACK 0x0009FFF0
 
 
@@ -36,7 +37,7 @@ typedef struct {
     u16 lim0_15;
     u16 base0_15;
     u8 base16_23;
-    u8 acces;
+    u8 access;
     u8 lim16_19 : 4;
     u8 other : 4;
     u8 base24_31;

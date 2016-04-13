@@ -4,8 +4,6 @@
 .global _asm_exc_GP
 .global _asm_exc_PF
 .global _asm_schedule
-.global _asm_int_1
-.global _asm_int_2
 
 .extern isr_PF_exc
 .extern isr_GP_exc
@@ -35,27 +33,19 @@
     popad
 .endm
 
-_asm_int_1:
-    SAVE_REGS
-    push 1
-    call isr_default_int
-    pop eax
-    mov al,0x20
-    out 0x20, al
-    RESTORE_REGS
-    iretd
-    .size   _asm_int_1, . - _asm_int_1
-
-_asm_int_2:
-    SAVE_REGS
-    push 2
-    call isr_default_int
-    pop eax
-    mov al,0x20
-    out 0x20, al
-    RESTORE_REGS
-    iretd
-    .size   _asm_int_2, . - _asm_int_2
+.macro INTERRUPT id
+    .global _asm_int_\id
+    _asm_int_\id:
+        SAVE_REGS
+        push \id
+        call isr_default_int
+        pop eax
+        mov al,0x20
+        out 0x20, al
+        RESTORE_REGS
+        iretd
+    .size   _asm_int_\id, . - _asm_int_\id
+.endm
 
 _asm_syscalls:
     SAVE_REGS
@@ -92,5 +82,16 @@ _asm_schedule:
     RESTORE_REGS
     iretd
     .size   _asm_schedule, . - _asm_schedule
+
+INTERRUPT 0
+INTERRUPT 1
+INTERRUPT 2
+INTERRUPT 3
+INTERRUPT 4
+INTERRUPT 5
+INTERRUPT 6
+INTERRUPT 7
+INTERRUPT 8
+INTERRUPT 9
 
 .att_syntax prefix
