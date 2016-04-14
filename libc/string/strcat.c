@@ -1,7 +1,6 @@
 #include <string.h>
 
-char *strcat (char *s1, const char *s2)
-{
+char *strcat(char *s1, const char *s2) {
   char *ret;
 
   ret = s1;
