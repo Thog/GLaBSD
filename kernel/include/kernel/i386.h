@@ -12,6 +12,7 @@
 #define TRAPGATE 0xEF00        /*  used to manage system calls */
 
 #include <kernel/types.h>
+#include <kernel/io.h>
 
 typedef struct {
   u16 previous_task, __previous_task_unused;
@@ -80,8 +81,5 @@ void init_idt_desc(u16 select, u32 offset, u16 type, idt_desc *desc);
 void init_idt(void);
 
 void init_pic(void);
-
-void outb(u16 ad, u8 v);
-void inb(u32 ad);
 
 #endif //_KERNEL_I386_H

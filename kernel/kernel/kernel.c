@@ -10,7 +10,6 @@ void kernel_early(void) {
 
 void kernel_main(void) {
   printf("Hello, I'm kernel_main!\n");
-  asm("INT $0xFE");
   while (true) {
   }
 }

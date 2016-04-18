@@ -1,15 +1,43 @@
-#include <kernel/i386.h>
 #include <kernel/arch.h>
-#include <string.h>
-#include <stdio.h>
+#include <kernel/i386.h>
 
-
-void outb(u16 ad, u8 v) {
-  asmv("outb %0, %1" : : "a"(v), "Nd"(ad));
+inline void outb(u16 address, u8 value) {
+  asmv("outb %0, %1" : : "a"(value), "Nd"(address));
 }
 
-void inb(u32 ad) {
+inline void outw(u16 address, u16 value) {
+  asmv("outw %0, %1" : : "a"(value), "Nd"(address));
+}
+
+inline void outl(u16 address, u32 value) {
+  asmv("outl %0, %1" : : "a"(value), "Nd"(address));
+}
+
+inline u8 inb(u16 address) {
   u8 ret;
-  asmv("inb %%dx, %%al" : "=a" (ret) : "d" (ad));
+  asmv("inb %1, %0" : "=a" (ret) : "Nd" (address));
   return ret;
+}
+
+inline u16 inw(u16 address) {
+  u16 ret;
+  asmv("inw %1, %0" : "=a" (ret) : "Nd" (address));
+  return ret;
+}
+
+inline u32 inl(u16 address) {
+  u32 ret;
+  asmv("inl %1, %0" : "=a" (ret) : "Nd" (address));
+  return ret;
+}
+
+inline void io_wait(void) {
+  asmv("outb %0, $0x80" : : "a"(0));
+}
+
+void send_eoi(u8 irq) {
+  if (irq >= 8)
+    outb(PIC2_COMMAND, PIC_EOI);
+
+  outb(PIC1_COMMAND, PIC_EOI);
 }
