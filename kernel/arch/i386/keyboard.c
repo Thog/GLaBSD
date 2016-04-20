@@ -1,5 +1,6 @@
 #include <kernel/arch.h>
 #include <kernel/io.h>
+#include <stdio.h>
 
 char getScancode() {
   char c = 0;
@@ -13,5 +14,7 @@ char getScancode() {
 }
 
 void isr_kbd_int(void) {
-
+  char key = getScancode();
+  printf("Key pressed! Scancode: %i\n", key);
+  send_eoi(1);
 }

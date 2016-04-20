@@ -9,7 +9,7 @@ void kernel_early(void) {
 }
 
 void kernel_main(void) {
-  printf("Hello, I'm kernel_main!\n");
+  printf("Hello, I'm kernel_main!\nWe have %iMB", get_total_ram());
   while (true) {
   }
 }

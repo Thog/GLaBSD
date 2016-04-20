@@ -1,5 +1,6 @@
 #include <kernel/i386.h>
 #include <kernel/arch.h>
+#include <kernel/keyboard.h>
 #include <string.h>
 #include <stdio.h>
 

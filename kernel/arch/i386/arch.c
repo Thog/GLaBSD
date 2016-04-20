@@ -1,4 +1,5 @@
 #include <kernel/arch.h>
+#include <kernel/tty.h>
 #include <kernel/i386.h>
 #include <stdio.h>
 
@@ -17,8 +18,9 @@ void init_arch(void) {
   init_gdt();
   printf("Loading IDT\n");
   init_idt();
-  printf("Enabling pics...");
+  printf("Enabling pics...\n");
   init_pic();
+
 }
 
 void set_arch_param(u32 ret, u32 ret1, u32 ret2, u32 ret3, u32 ret4) {
@@ -37,6 +39,7 @@ u32 get_arch_arg(u32 n) {
 }
 
 void kernel_panic(char *error) {
+  terminal_clear(COLOR_RED);
   printf("\n\nKERNEL PANIC - %s\nThis is a critical error, please report it to the author!\n", error);
   asm("hlt");
 }

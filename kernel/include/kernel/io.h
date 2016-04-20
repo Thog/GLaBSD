@@ -62,4 +62,9 @@ void io_wait(void);
  */
 void send_eoi(u8 irq);
 
+/**
+ * Get RAM total size using CMOS (in byte)
+ */
+u16 get_total_ram(void);
+
 #endif

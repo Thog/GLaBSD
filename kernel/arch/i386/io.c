@@ -41,3 +41,13 @@ void send_eoi(u8 irq) {
 
   outb(PIC1_COMMAND, PIC_EOI);
 }
+
+u16 get_total_ram(void) {
+  unsigned char low, high;
+
+  outb(0x70, 0x30);
+  low = inb(0x71);
+  outb(0x70, 0x31);
+  high = inb(0x71);
+  return low | high << 8;
+}

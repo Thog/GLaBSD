@@ -9,7 +9,7 @@ int putchar(int ic) {
   char c = (char) ic;
   terminal_write(&c, sizeof(c));
 #else
-  // TODO: You need to implement a write system call.
+  // TODO: Write system call.
 #endif
   return ic;
 }
