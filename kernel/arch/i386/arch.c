@@ -39,8 +39,10 @@ u32 get_arch_arg(u32 n) {
 }
 
 void kernel_panic(char *error) {
-  terminal_clear(COLOR_RED);
-  printf("\n\nKERNEL PANIC - %s\nThis is a critical error, please report it to the author!\n", error);
+  terminal_setbackground_color(COLOR_RED);
+  terminal_clear();
+  terminal_setcolor(COLOR_WHITE);
+  printf("KERNEL PANIC - %s\nThis is a critical error, please report it to the author!\n", error);
   asm("hlt");
 }
 
