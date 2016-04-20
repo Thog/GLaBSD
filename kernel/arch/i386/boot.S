@@ -10,12 +10,19 @@
 .long FLAGS
 .long CHECKSUM
 
+# Provide our own stack to esp registry (GRUB boot infos)
+.section .bootstrap_stack, "aw", @nobits
+stack_bottom:
+.skip 16384 # 16 KiB
+stack_top:
+
 # The kernel entry point.
 .section .text
 .global kernel_init
 .type kernel_init, @function
 kernel_init:
 	# Initialize the core kernel before running the global constructors.
+	movl $stack_top, %esp
 	call kernel_early
 
 	# Call the global constructors.

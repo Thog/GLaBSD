@@ -4,8 +4,8 @@
 #include <stdio.h>
 
 static char cpu_name[512] = "Unknown";
-u32 *stack_ptr;
 u32 ret_reg[5];
+multiboot_info_t *multiboot_info = 0x00;
 
 char *detect() {
   cpu_vendor_name(cpu_name);
@@ -42,4 +42,16 @@ void kernel_panic(char *error) {
   terminal_clear(COLOR_RED);
   printf("\n\nKERNEL PANIC - %s\nThis is a critical error, please report it to the author!\n", error);
   asm("hlt");
+}
+
+void set_multiboot_info(multiboot_info_t *mbt) {
+  multiboot_info = mbt;
+}
+
+multiboot_info_t *get_multiboot_info(void) {
+  return multiboot_info;
+}
+
+u64 get_total_ram(void) {
+  return get_total_ram_cmos(); // TODO: Use multiboot info
 }

@@ -42,7 +42,7 @@ void send_eoi(u8 irq) {
   outb(PIC1_COMMAND, PIC_EOI);
 }
 
-u16 get_total_ram(void) {
+u16 get_total_ram_cmos(void) {
   unsigned char low, high;
 
   outb(0x70, 0x30);
