@@ -10,7 +10,7 @@ uint16_t *terminal_buffer;
 void terminal_initialize(void) {
   x = 0;
   y = 0;
-  terminal_color = make_color(COLOR_LIGHT_GREY, COLOR_BLACK);
+  terminal_color = COLOR_LIGHT_GREY;
   background_color = COLOR_BLACK;
   terminal_buffer = VGA_MEMORY;
   terminal_clear();
