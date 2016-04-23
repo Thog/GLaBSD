@@ -10,7 +10,7 @@ void kernel_early(multiboot_info_t *mbt, unsigned int magic) {
 }
 
 void kernel_main(void) {
-  printf("Hello, I'm kernel_main!\nWe have %iMB", get_total_ram());
+  printf("Hello, I'm kernel_main!");
   while (true) {
   }
 }

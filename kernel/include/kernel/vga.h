@@ -24,7 +24,7 @@ enum vga_color {
 };
 
 static inline u16 make_vgaentry(char c, u8 foreground, u8 background) {
-  return c | ((background << 4 | foreground & 0x0F) << 8);
+  return c | (((background << 4) | (foreground & 0x0F)) << 8);
 }
 
 static const size_t VGA_WIDTH = 80;

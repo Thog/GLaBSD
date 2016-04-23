@@ -1,6 +1,7 @@
 #include <kernel/arch.h>
 #include <kernel/tty.h>
 #include <kernel/i386.h>
+#include <kernel/keyboard.h>
 #include <stdio.h>
 
 static char cpu_name[512] = "Unknown";
@@ -20,7 +21,7 @@ void init_arch(void) {
   init_idt();
   printf("Enabling pics...\n");
   init_pic();
-
+  init_keyboard();
 }
 
 void set_arch_param(u32 ret, u32 ret1, u32 ret2, u32 ret3, u32 ret4) {
