@@ -35,6 +35,8 @@ u8 get_scancode() {
 u8 scancode_to_ascii(u8 key) {
   if (key < 0x38)
     return shift_locked ? us_keyboard_upper[key] : us_keyboard[key];
+  if (key == 0x39)
+    return ' ';
   return 0;
 }
 
