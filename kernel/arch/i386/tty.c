@@ -15,6 +15,7 @@ void terminal_initialize(void) {
   terminal_buffer = VGA_MEMORY;
   terminal_clear();
   video_port = *((u16 *) 0x0463); // base IO port for video
+  printf("Video Port: %i\n", video_port);
 }
 
 void terminal_setcolor(u8 color) {
@@ -43,27 +44,27 @@ void terminal_putentryat(char c, u8 color, size_t x, size_t y) {
 
 void terminal_putchar(char c) {
   if (!c) return; // Ignore '\0'
-  if (c == '\b')
-  {
+  if (c == '\b') {
     --x;
-    if (!x && y)
-    {
+    if (!x && y) {
       x = VGA_WIDTH;
       --y;
     }
     terminal_putentryat(' ', terminal_color, x, y);
-    return;
   }
-  if (x > VGA_WIDTH || c == '\n') {
-    x = 0;
-    y++;
+  else {
+    if (x > VGA_WIDTH || c == '\n') {
+      x = 0;
+      y++;
+    }
+    if (y > VGA_HEIGHT - 1)
+      y = 0;
+    if (c != '\n') {
+      terminal_putentryat(c, terminal_color, x, y);
+      ++x; // Increment X pos
+    }
   }
-  if (y > VGA_HEIGHT - 1)
-    y = 0;
-  if (c != '\n') {
-    terminal_putentryat(c, terminal_color, x, y);
-    ++x; // Increment X pos
-  }
+  terminal_change_cursor_pos(x, y);
 }
 
 void terminal_write(const char *data, size_t size) {
@@ -76,7 +77,7 @@ void terminal_writestring(const char *data) {
 }
 
 void terminal_change_cursor_pos(u8 x, u8 y) {
-  u16 position = (x * 80) + y;
+  u16 position = y * 80 + x;
   outb(video_port, 0x0F);
   outb(video_port + 1, (u8) (position & 0xFF));
   outb(video_port, 0x0E);

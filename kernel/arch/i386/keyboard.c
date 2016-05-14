@@ -40,6 +40,17 @@ u8 scancode_to_ascii(u8 key) {
   return 0;
 }
 
+void keyboard_ack(void) {
+  while (inb(0x60) != 0xFA);
+}
+
+void keyboard_led(u8 status)
+{
+  outb(0x60, 0xED);
+  keyboard_ack();
+  outb(0x60, status);
+}
+
 void isr_kbd_int(void) {
   u8 key = get_scancode();
 
@@ -66,7 +77,5 @@ void isr_kbd_int(void) {
 }
 
 void init_keyboard(void) {
-  outb(0x64, 0xF4);
-  u8 scanCodeID = inb(0xFA);
-  printf("Init keyboard: %i\n", scanCodeID);
+
 }

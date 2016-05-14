@@ -17,6 +17,11 @@ void init_arch(void) {
   printf("Architecture is x86 (cpu=%s)\n", detect());
   printf("Loading GDT\n");
   init_gdt();
+  asm("	movw $0x38, %ax \n \
+		ltr %ax");
+  asm("  movw %%ss, %0 \n \
+       movl %%esp, %1" : "=m" (default_tss.ss0), "=m" (default_tss.esp0) : );
+  printf("TSS have been loaded!\n");
   printf("Loading IDT\n");
   init_idt();
   printf("Enabling pics...\n");

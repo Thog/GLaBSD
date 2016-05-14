@@ -77,8 +77,6 @@ u32 cpu_vendor_name(char *name) {
 /* GDT */
 gdt_desc kgdt[GDTSIZE];
 
-tss default_tss;
-
 /* GDTR */
 gdt_r kgdtr;
 
@@ -125,7 +123,7 @@ void do_syscalls(int num) {
 void init_gdt(void) {
   default_tss.debug_flag = 0x00;
   default_tss.io_map = 0x00;
-  default_tss.esp0 = 0x1FFF0;
+  default_tss.esp0 = 0x20000;
   default_tss.ss0 = 0x18;
 
   /* initialize gdt segments */
@@ -133,6 +131,12 @@ void init_gdt(void) {
   init_gdt_desc(0x0, 0xFFFFF, 0x9b, 0x0D, &kgdt[1]);      // Code
   init_gdt_desc(0x0, 0xFFFFF, 0x93, 0x0D, &kgdt[2]);      // Data
   init_gdt_desc(0x0, 0x0, 0x97, 0x0D, &kgdt[3]);      // Stack
+
+  // Userland segment
+  init_gdt_desc(0x30000, 0x1, 0xFF, 0x0D, &kgdt[4]);    // user code
+  init_gdt_desc(0x30000, 0x1, 0xF3, 0x0D, &kgdt[5]);    // user data
+  init_gdt_desc(0x0, 0x0, 0xF7, 0x0D, &kgdt[6]);        // user stack
+  init_gdt_desc((u32) &default_tss, 0x67, 0xE9, 0x00, &kgdt[7]);    // TSS descriptor
 
   /* initialize the gdtr structure */
   kgdtr.limit = GDTSIZE * 8;
@@ -267,4 +271,21 @@ void remap_isr(u32 offset1, u32 offset2) {
 void init_pic(void) {
   remap_isr(0x20, 0x70);
   asmv("sti");
+}
+
+void jump_to_task(tss task) {
+  asm("   cli \n \
+            push $0x33 \n \
+            push $0x30000 \n \
+            pushfl \n \
+            popl %%eax \n \
+            orl $0x200, %%eax \n \
+            and $0xffffbfff, %%eax \n \
+            push %%eax \n \
+            push $0x23 \n \
+            push $0x0 \n \
+            movl $0x20000, %0 \n \
+            movw $0x2B, %%ax \n \
+            movw %%ax, %%ds \n \
+            iret" : "=m" (task.esp0) : );
 }

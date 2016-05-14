@@ -82,4 +82,6 @@ void init_idt(void);
 
 void init_pic(void);
 
+tss default_tss;
+
 #endif //_KERNEL_I386_H
