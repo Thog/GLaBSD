@@ -12,7 +12,7 @@
 #define TRAPGATE 0xEF00        /*  used to manage system calls */
 
 #include <kernel/types.h>
-#include <kernel/io.h>
+#include <kernel/arch.h>
 
 typedef struct {
   u16 previous_task, __previous_task_unused;

@@ -3,6 +3,7 @@
 #define asm        __asm__
 #define asmv        __asm__ __volatile__
 #include <kernel/types.h>
+#include <kernel/io.h>
 #include <kernel/grub.h>
 
 void init_arch(void);

@@ -1,5 +1,4 @@
 #include <kernel/arch.h>
-#include <kernel/i386.h>
 
 inline void outb(u16 address, u8 value) {
   asmv("outb %0, %1" : : "a"(value), "Nd"(address));

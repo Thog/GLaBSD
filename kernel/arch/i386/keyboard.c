@@ -1,5 +1,4 @@
 #include <kernel/arch.h>
-#include <kernel/io.h>
 #include <kernel/keyboard.h>
 #include <stdio.h>
 
@@ -68,8 +67,6 @@ void isr_kbd_int(void) {
       u8 c = scancode_to_ascii(key);
       if (c)
         putchar(c);
-      else
-        printf("Unknown ScanCode %d", key);
     }
 
   }
