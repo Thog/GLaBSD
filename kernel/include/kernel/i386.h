@@ -1,15 +1,17 @@
 #ifndef _KERNEL_I386_H
 #define _KERNEL_I386_H
+
 #define GDTSIZE    0xFF // Max descriptors in the table
 #define GDTBASE 0x00000800 // address of GDT
 #define IDTBASE 0x00000000 // address of IDT
 #define IDTSIZE 0xFF // Max descriptors in the table
 #define IDTBYTESIZE 0x800
 #define KERN_STACK 0x0009FFF0
-
-
 #define INTGATE  0x8E00        /* used to manage interrupts calls */
 #define TRAPGATE 0xEF00        /*  used to manage system calls */
+#define PAGING_FLAG 0x80000000 // CR0 - bit 31
+#define PD0_ADDR 0x20000       // address of the first kernel page directory
+#define PT0_ADDR 0x21000       // address of the first kernel page table
 
 #include <kernel/types.h>
 #include <kernel/arch.h>
@@ -75,6 +77,8 @@ u32 cpu_vendor_name(char *str);
 // GDT init
 void init_gdt_desc(u32 base, u32 limit, u8 access, u8 other, gdt_desc *desc);
 void init_gdt(void);
+
+void init_memory_manager(void);
 
 // IDT init
 void init_idt_desc(u16 select, u32 offset, u16 type, idt_desc *desc);

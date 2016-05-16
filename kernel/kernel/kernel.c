@@ -17,9 +17,9 @@ void testing_task(void) {
 
 void kernel_main(void) {
   printf("Hello, I'm kernel_main!\n");
-  memcpy((char *) 0x30000, &testing_task, 100); // TODO: ELF loader
+  //memcpy((char *) 0x30000, &testing_task, 100); // TODO: ELF loader
   terminal_change_cursor_pos(-1, -1); // Mask cursor
-  terminal_setbackground_color(COLOR_LIGHT_RED);
+  /*terminal_setbackground_color(COLOR_LIGHT_RED);
   printf("Switching to user task (ring3 mode)\n");
   terminal_setbackground_color(COLOR_BLACK);
   asm("     cli \n \
@@ -35,7 +35,8 @@ void kernel_main(void) {
             movl $0x20000, %0 \n \
             movw $0x2B, %%ax \n \
             movw %%ax, %%ds \n \
-            iret" : "=m" (default_tss.esp0) : );
+            iret" : "=m" (default_tss.esp0) : );*/
+  while (1);
   printf("Critical error, halting system\n");
   asm("hlt");
 }

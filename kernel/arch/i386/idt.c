@@ -87,6 +87,13 @@ void isr_GP_exc(void) {
   kernel_panic("General Protection fault!");
 }
 
+void init_idt_desc(u16 select, u32 offset, u16 type, idt_desc *desc) {
+  desc->offset0_15 = (offset & 0xffff);
+  desc->select = select;
+  desc->type = type;
+  desc->offset16_31 = (offset & 0xffff0000) >> 16;
+}
+
 void init_idt(void) {
 
   init_idt_desc(0x08, (u32) _asm_int_0, INTGATE, &kidt[0]);
@@ -100,8 +107,8 @@ void init_idt(void) {
   init_idt_desc(0x08, (u32) _asm_int_8, INTGATE, &kidt[8]);
   init_idt_desc(0x08, (u32) _asm_int_9, INTGATE, &kidt[9]);
   /* Vectors  0 -> 31 are for exceptions */
-  init_idt_desc(0x08, (u32) _asm_exc_GP, INTGATE, &kidt[13]);     /* #GP */
-  init_idt_desc(0x08, (u32) _asm_exc_PF, INTGATE, &kidt[14]);     /* #PF */
+  init_idt_desc(0x08, (u32) _asm_exc_GP, INTGATE, &kidt[13]);     // General Protection Fault
+  init_idt_desc(0x08, (u32) _asm_exc_PF, INTGATE, &kidt[14]);     // Page Fault
 
   init_idt_desc(0x08, (u32) _asm_schedule, INTGATE, &kidt[32]); // Programmable Interrupt Timer Interrupt
   init_idt_desc(0x08, (u32) _asm_int_33, INTGATE, &kidt[33]); // Keyboard Interrupt

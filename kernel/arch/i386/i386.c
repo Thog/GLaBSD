@@ -40,13 +40,6 @@ u32 cpu_vendor_name(char *name) {
 
 u32 *stack_ptr = 0;
 
-void init_idt_desc(u16 select, u32 offset, u16 type, idt_desc *desc) {
-  desc->offset0_15 = (offset & 0xffff);
-  desc->select = select;
-  desc->type = type;
-  desc->offset16_31 = (offset & 0xffff0000) >> 16;
-}
-
 void do_syscalls(int num) {
   u32 ret, ret1, ret2, ret3, ret4;
   asm("mov %%ebx, %0": "=m"(ret):);
@@ -94,19 +87,48 @@ void init_pic(void) {
   asmv("sti");
 }
 
+void init_memory_manager(void) {
+  u32 *pd0;       // kernel page directory
+  u32 *pt0;       // kernel page table
+  u32 page_address;
+  int i;
+
+  // create page directory
+  pd0 = (u32 *) PD0_ADDR;
+  pd0[0] = PT0_ADDR;
+  pd0[0] |= 3;
+  for (i = 1; i < 1024; i++)
+    pd0[i] = 0;
+
+  // create the first page table
+  pt0 = (u32 *) PT0_ADDR;
+  page_address = 0;
+  for (i = 0; i < 1024; i++) {
+    pt0[i] = page_address;
+    pt0[i] |= 3;
+    page_address += 4096;
+  }
+
+  asm("mov %0, %%eax    \n \
+       mov %%eax, %%cr3 \n \
+       mov %%cr0, %%eax \n \
+       or %1, %%eax     \n \
+       mov %%eax, %%cr0"::"i" (PD0_ADDR), "i" (PAGING_FLAG));
+}
+
 void jump_to_task(tss task) {
-  asm("   cli \n \
-            push $0x33 \n \
-            push $0x30000 \n \
-            pushfl \n \
-            popl %%eax \n \
-            orl $0x200, %%eax \n \
-            and $0xffffbfff, %%eax \n \
-            push %%eax \n \
-            push $0x23 \n \
-            push $0x0 \n \
-            movl $0x20000, %0 \n \
-            movw $0x2B, %%ax \n \
-            movw %%ax, %%ds \n \
-            iret" : "=m" (task.esp0) : );
+  asm("cli \n \
+       push $0x33 \n \
+       push $0x30000 \n \
+       pushfl \n \
+       popl %%eax \n \
+       orl $0x200, %%eax \n \
+       and $0xffffbfff, %%eax \n \
+       push %%eax \n \
+       push $0x23 \n \
+       push $0x0 \n \
+       movl $0x20000, %0 \n \
+       movw $0x2B, %%ax \n \
+       movw %%ax, %%ds \n \
+       iret" : "=m" (task.esp0) : );
 }

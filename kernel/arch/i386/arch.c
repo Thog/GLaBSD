@@ -24,6 +24,8 @@ void init_arch(void) {
   printf("TSS have been loaded!\n");
   printf("Loading IDT\n");
   init_idt();
+  init_memory_manager();
+  printf("Memory Manager loaded\n");
   printf("Enabling pics...\n");
   init_pic();
   init_keyboard();
