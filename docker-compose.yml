@@ -1,0 +1,7 @@
+compiler:
+  build: docker
+  ports:
+    - "1340:22"
+  volumes:
+    - ./:/project/
+  restart: on-failure:3
