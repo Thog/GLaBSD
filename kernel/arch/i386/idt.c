@@ -1,4 +1,7 @@
 #include <kernel/i386.h>
+#include <kernel/keyboard.h>
+#include <stdio.h>
+#include <string.h>
 
 /* IDT table */
 idt_desc kidt[IDTSIZE];
@@ -37,8 +40,8 @@ extern void _asm_exc_PF(void);
 
 extern void _asm_schedule();
 
-void isr_default_int(int id) {
-  switch (id) {
+void isr_default_int(irq_data data) {
+  switch (data.err_code) {
     case 0:
       kernel_panic("Division by 0!");
       break;
@@ -49,7 +52,7 @@ void isr_default_int(int id) {
       isr_kbd_int();
       break;
     default:
-      printf("Unknown Interrupt: %i\n", id);
+      printf("Unknown Interrupt: %i\n", data.err_code);
       return;
   }
   outb(0x20, 0x20);
@@ -119,7 +122,7 @@ void init_idt(void) {
   kidtr.limit = IDTBYTESIZE;
   kidtr.base = IDTBASE;
   /* Copy the IDT to the memory */
-  memcpy((char *) kidtr.base, (char *) kidt, IDTBYTESIZE);
+  memcpy((void *) kidtr.base, kidt, IDTBYTESIZE);
   /* Load the IDTR registry */
   asm("lidtl (kidtr)");
 }

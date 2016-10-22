@@ -4,6 +4,7 @@
 #include <kernel/tasks.h>
 
 void kernel_early(multiboot_info_t *mbt, unsigned int magic) {
+  (void)magic;
   terminal_initialize();
   printf("Initializing Kernel core...\n");
   set_multiboot_info(mbt);
@@ -19,10 +20,10 @@ void kernel_main(void) {
   printf("Hello, I'm kernel_main!\n");
   //memcpy((char *) 0x30000, &testing_task, 100); // TODO: ELF loader
   terminal_change_cursor_pos(-1, -1); // Mask cursor
-  /*terminal_setbackground_color(COLOR_LIGHT_RED);
-  printf("Switching to user task (ring3 mode)\n");
+  //terminal_setbackground_color(COLOR_LIGHT_RED);
+  //printf("Switching to user task (ring3 mode)\n");
   terminal_setbackground_color(COLOR_BLACK);
-  asm("     cli \n \
+  /*asm("     cli \n \
             push $0x33 \n \
             push $0x30000 \n \
             pushfl \n \

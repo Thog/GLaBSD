@@ -14,7 +14,7 @@
 .section .text
 
 .macro SAVE_REGS
-    pushad
+    pusha
     push ds
     push es
     push fs
@@ -30,7 +30,7 @@
     pop fs
     pop es
     pop ds
-    popad
+    popa
 .endm
 
 .macro INTERRUPT id

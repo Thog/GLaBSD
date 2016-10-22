@@ -15,7 +15,6 @@ void terminal_initialize(void) {
   terminal_buffer = VGA_MEMORY;
   terminal_clear();
   video_port = *((u16 *) 0x0463); // base IO port for video
-  printf("Video Port: %i\n", video_port);
 }
 
 void terminal_setcolor(u8 color) {

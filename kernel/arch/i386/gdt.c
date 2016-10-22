@@ -1,4 +1,5 @@
 #include <kernel/i386.h>
+#include <string.h>
 
 gdt_desc kgdt[GDTSIZE];
 gdt_r kgdtr;
@@ -37,7 +38,7 @@ void init_gdt(void) {
   kgdtr.base = GDTBASE;
 
   /* copy the gdtr to its memory area */
-  memcpy((char *) kgdtr.base, (char *) kgdt, kgdtr.limit);
+  memcpy((void *) kgdtr.base, kgdt, kgdtr.limit);
 
   /* load the gdtr registry */
   asm("lgdtl (kgdtr)");

@@ -7,6 +7,7 @@ BOOTDIR = /boot
 LIBDIR = $(PREFIX)/lib
 INCLUDEDIR = $(PREFIX)/include
 CC = ${HOST}-gcc --sysroot=$(PWD)/sysroot -isystem=$(INCLUDEDIR)
+AS = ${HOST}-as
 CFLAGS = -O2 -g
 export
 

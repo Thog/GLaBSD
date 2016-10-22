@@ -31,7 +31,7 @@ inline u32 inl(u16 address) {
 }
 
 inline void io_wait(void) {
-  asmv("outb %0, $0x80" : : "a"(0));
+  asmv("outb %%al, $0x80" : : "a" (0));
 }
 
 void send_eoi(u8 irq) {

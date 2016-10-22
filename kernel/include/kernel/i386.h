@@ -37,6 +37,10 @@ typedef struct {
 } __attribute__ ((packed)) tss;
 
 typedef struct {
+    u32 eax, ecx, edx, ebx, esp, ebp, esi, edi;
+} __attribute__ ((packed)) registers;
+
+typedef struct {
   u16 lim0_15;
   u16 base0_15;
   u8 base16_23;
@@ -69,6 +73,13 @@ typedef struct {
   u32 which_int, err_code;
   u32 eip, cs, eflags, user_esp, user_ss;
 } __attribute__((packed)) regs_t;
+
+typedef struct {
+    u32 err_code;   // push byte
+    u32 gs, fs, es, ds; // Segments
+    u32 edi, esi, ebp, esp, ebx, edx, ecx, eax;  // pusha
+    u32 eip, cs, eflags, useresp, ss;   // already pushed by the CPU
+} __attribute__((packed)) irq_data;
 
 // cpu detection
 regs_t cpu_cpuid(int code);

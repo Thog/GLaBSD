@@ -41,6 +41,7 @@ u32 cpu_vendor_name(char *name) {
 u32 *stack_ptr = 0;
 
 void do_syscalls(int num) {
+  (void)num;
   u32 ret, ret1, ret2, ret3, ret4;
   asm("mov %%ebx, %0": "=m"(ret):);
   asm("mov %%ecx, %0": "=m"(ret1):);
@@ -93,14 +94,16 @@ void init_memory_manager(void) {
   u32 page_address;
   int i;
 
-  // create page directory
   pd0 = (u32 *) PD0_ADDR;
+  // create Kernel Page Directory
   pd0[0] = PT0_ADDR;
   pd0[0] |= 3;
+
+  // Init others segment to NULL
   for (i = 1; i < 1024; i++)
     pd0[i] = 0;
 
-  // create the first page table
+  // create the page table
   pt0 = (u32 *) PT0_ADDR;
   page_address = 0;
   for (i = 0; i < 1024; i++) {

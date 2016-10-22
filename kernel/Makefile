@@ -61,7 +61,7 @@ glabsd.kernel: $(OBJ_LINK_LIST) $(ARCHDIR)/linker.ld
 
 %.o: %.S
 	@echo "kernel> Building $<"
-	@$(CC) -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+	@$(AS) -c $< -o $@
 
 clean:
 	@rm -f glabsd.kernel $(OBJS) $(ALL_OUR_OBJS) *.o */*.o */*/*.o
