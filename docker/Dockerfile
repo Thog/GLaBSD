@@ -2,11 +2,11 @@ FROM ubuntu:14.04
 MAINTAINER Thog <thog92@hotmail.fr]
 
 # install dependencies
-RUN apt-get update && \
-apt-get install -y gcc wget build-essential openssh-server grub && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+apt-get update && \
+apt-get install -y libgmp3-dev libmpfr-dev libisl-dev libcloog-isl-dev libmpc-dev texinfo make bison flex gcc g++ nasm build-essential grub-pc zip xorriso wget openssh-server && \
 apt-get clean autoclean && \
-apt-get autoremove -y && \
-rm -rf /var/lib/apt /var/lib/dpkg /var/lib/cache /var/lib/log
+apt-get autoremove -y
 
 # specify binutils/gcc version
 ENV DOWNLOAD_BINUTILS=binutils-2.26
