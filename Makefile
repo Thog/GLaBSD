@@ -4,8 +4,11 @@ SRCDIRS = boot src
 $(foreach dir,$(SRCDIRS),$(eval include $(dir)/make.config))
 
 ARCH = i686-elf
+YASM_FORMAT = elf32
+
 CC = $(ARCH)-gcc
 AS = $(ARCH)-gcc
+YASM = yasm
 CFLAGS = -Iincludes -std=gnu11 -g -ffreestanding -Wall -Wextra
 LDFLAGS = -n -T linker.ld -ffreestanding -O2 -nostdlib -lgcc
 
@@ -16,6 +19,10 @@ LDFLAGS = -n -T linker.ld -ffreestanding -O2 -nostdlib -lgcc
 %.o: %.S
 	@echo "kernel> Building $<"
 	@$(AS) -c $< -o $@
+
+%.o: %.asm
+	@echo "kernel> Building $<"
+	@$(YASM) -f $(YASM_FORMAT) $< -o $@
 
 $(NAME).bin: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS)
