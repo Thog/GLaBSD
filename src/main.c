@@ -1,6 +1,6 @@
 #include "kernel.h"
 
-int main(void)
+int main()
 {
     printk("Hello from kernel main :)");
     return (0);

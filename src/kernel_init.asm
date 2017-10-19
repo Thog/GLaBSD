@@ -1,35 +1,40 @@
-section .bss
-align 16
-stack_bottom:
-resb 16384 ; 16 KiB
-stack_top:
-
-
 section .text
-global _start
-
+align 4
+global _start_virtual
 extern remap_interrupts
 extern mask_interrupts
 extern init_gdt
 extern main
+extern page_directory
+extern __va_start__
+extern screen_init
 
-_start:
-    ; Setup the temp stack
-    mov esp, stack_top
+_start_virtual:
+    ; unmap the first identity page
+    mov dword [page_directory], 0
+    invlpg [0]
 
-    ; Remap interrupts
+    push eax ; backup multiboot ptr
+
+    ; setup the screen va_start
+    lea eax, [__va_start__]
+    push eax
+    call screen_init
+
+    pop eax ; restore multiboot ptr
+
+    ; remap interrupts
     call remap_interrupts
 
-    ; Mask interrupts
+    ; mask interrupts
     call mask_interrupts
 
-    ; Setup GDT
+    ; setup GDT
     call init_gdt
 
-    ; Kernel main
+    ; kernel main
     call main
 
-    ; Not supposed to return but well, disable interrupts
     cli
 .endless:
     jmp .endless

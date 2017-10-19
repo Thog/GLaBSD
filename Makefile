@@ -10,7 +10,7 @@ CC = $(ARCH)-gcc
 AS = $(ARCH)-gcc
 YASM = yasm
 CFLAGS = -Iincludes -std=gnu11 -g -ffreestanding -Wall -Wextra
-LDFLAGS = -n -T linker.ld -ffreestanding -O2 -nostdlib -lgcc
+LDFLAGS = -n -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -Wl,--print-map
 
 %.o: %.c
 	@echo "kernel> Building $<"
