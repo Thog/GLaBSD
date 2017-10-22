@@ -14,14 +14,13 @@ _start_virtual:
     mov dword [page_directory], 0
     invlpg [0]
 
-    push eax ; backup multiboot ptr
+    push eax ; backup multiboot magic
 
     ; setup the screen va_start
     lea eax, [__va_start__]
     push eax
     call screen_init
-
-    pop eax ; restore multiboot ptr
+    add esp, 4
 
     ; remap interrupts
     call remap_interrupts
@@ -32,6 +31,9 @@ _start_virtual:
     ; setup GDT
     call init_gdt
 
+    pop eax ; restore multiboot magic
+    push ebx ; multiboot ptr
+    push eax ; multiboot magic
     ; kernel main
     call main
 

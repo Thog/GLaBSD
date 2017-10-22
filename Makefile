@@ -1,4 +1,4 @@
-NAME=kernel
+NAME=moe
 SRCDIRS = boot src
 
 $(foreach dir,$(SRCDIRS),$(eval include $(dir)/make.config))
@@ -22,7 +22,7 @@ LDFLAGS = -n -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -Wl,--print-map
 
 %.o: %.asm
 	@echo "kernel> Building $<"
-	@$(YASM) -f $(YASM_FORMAT) $< -o $@
+	@$(YASM) -g dwarf2 -f $(YASM_FORMAT) $< -o $@
 
 $(NAME).bin: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS)
@@ -40,7 +40,7 @@ iso: $(NAME).bin
 
 	@echo "Preparing ISO..."
 	@cp $(NAME).bin isodir/boot/
-	@echo "menuentry \"GLaBSD\" {multiboot2 /boot/$(NAME).bin}" > isodir/boot/grub/grub.cfg
+	@echo "menuentry \"MOE\" {multiboot2 /boot/$(NAME).bin}" > isodir/boot/grub/grub.cfg
 	@echo "Creating ISO..."
 	@grub-mkrescue -o $(NAME).iso isodir
 	@echo "Build complete!"

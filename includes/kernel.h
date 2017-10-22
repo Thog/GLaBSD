@@ -2,6 +2,7 @@
 #define KERNEL_H
 
 #include "types.h"
+#include "string.h"
 #include "boot.h"
 #include "pic.h"
 #include "gdt.h"

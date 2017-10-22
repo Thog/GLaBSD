@@ -1,6 +1,13 @@
 #ifndef BOOT_H
 #define BOOT_H
 
+typedef struct multiboot2_s
+{
+    u16 type;
+    u16 flags;
+    u32 size;
+} multiboot2_t;
+
 static inline void outb(u16 port, u8 val)
 {
     asm volatile("outb %0, %1" :: "a"(val), "Nd"(port));
