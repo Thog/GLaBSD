@@ -17,7 +17,6 @@ void set_gdt_entry(s32 index, u32 base, u32 limit, u8 access, u8 flags)
 
 void init_gdt(void)
 {
-    printk("INIT GDT\n");
     gdt_ptr.limit = (sizeof(gdt_entry_t) * sizeof(gdt_data)) - 1;
     gdt_ptr.base = (u32)&gdt_data;
     set_gdt_entry(0, 0, 0, 0, 0); // NULL segment
@@ -25,6 +24,5 @@ void init_gdt(void)
     set_gdt_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Data segment
     set_gdt_entry(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User mode code segment
     set_gdt_entry(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
-    printk("FLUSH GDT\n");
     gdt_flush();
 }

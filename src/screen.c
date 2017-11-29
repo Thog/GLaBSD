@@ -6,12 +6,12 @@ static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
 static volatile u16 *video_base = NULL;
 
-void screen_init(u8 *va_start)
+void screen_init(void)
 {
-    video_base = (volatile u16 *)(va_start + 0xB8000);
+    video_base = (volatile u16 *)(((u8*)get_kernel_base()) + 0xB8000);
 }
 
-static void screen_printkc(char c)
+void screen_printkc(char c)
 {
     if (c == '\n')
     {
@@ -32,7 +32,7 @@ static void screen_printkc(char c)
     }
 }
 
-static void screen_printk(char *str)
+void screen_printk(char *str)
 {
     if (!video_base)
         return;
@@ -41,33 +41,4 @@ static void screen_printk(char *str)
     {
         screen_printkc(*str++);
     }
-}
-
-void printk_int_inner(u32 data, char *base, u32 base_len)
-{
-    if (data >= base_len)
-    {
-        printk_int_inner(data / base_len, base, base_len);
-        printk_int_inner(data % base_len, base, base_len);
-    }
-    else
-        printkc(base[data]);
-}
-
-void printk_int(u32 data, char *base)
-{
-    u32 base_len = strlen(base);
-    if (base_len == 16)
-        printk("0x");
-    printk_int_inner(data, base, base_len);
-}
-
-void printkc(char c)
-{
-    screen_printkc(c);
-}
-
-void printk(char *str)
-{
-    screen_printk(str);
 }

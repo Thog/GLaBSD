@@ -7,7 +7,7 @@ extern init_gdt
 extern main
 extern page_directory
 extern __va_start__
-extern screen_init
+extern set_kernel_virtual_start
 
 _start_virtual:
     ; unmap the first identity page
@@ -19,7 +19,7 @@ _start_virtual:
     ; setup the screen va_start
     lea eax, [__va_start__]
     push eax
-    call screen_init
+    call set_kernel_virtual_start
     add esp, 4
 
     ; remap interrupts
@@ -32,6 +32,7 @@ _start_virtual:
     call init_gdt
 
     pop eax ; restore multiboot magic
+    add ebx, __va_start__ ; the multiboot ptr must be in the va range
     push ebx ; multiboot ptr
     push eax ; multiboot magic
     ; kernel main

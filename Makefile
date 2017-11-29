@@ -1,5 +1,5 @@
 NAME=moe
-SRCDIRS = boot src
+SRCDIRS = boot drivers src
 
 $(foreach dir,$(SRCDIRS),$(eval include $(dir)/make.config))
 
@@ -9,8 +9,8 @@ YASM_FORMAT = elf32
 CC = $(ARCH)-gcc
 AS = $(ARCH)-gcc
 YASM = yasm
-CFLAGS = -Iincludes -std=gnu11 -g -ffreestanding -Wall -Wextra
-LDFLAGS = -n -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -Wl,--print-map
+CFLAGS = -Wall -Wextra -Werror -Iincludes -std=gnu11 -g -ffreestanding -D SERIAL_LOGGING
+LDFLAGS = -nostdlib -n -T linker.ld -ffreestanding -O2 -Wl,--print-map
 
 %.o: %.c
 	@echo "kernel> Building $<"
@@ -25,7 +25,7 @@ LDFLAGS = -n -T linker.ld -ffreestanding -O2 -nostdlib -lgcc -Wl,--print-map
 	@$(YASM) -g dwarf2 -f $(YASM_FORMAT) $< -o $@
 
 $(NAME).bin: $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) -lgcc
 
 all: $(NAME).bin
 
