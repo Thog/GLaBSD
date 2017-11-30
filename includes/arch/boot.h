@@ -1,6 +1,8 @@
 #ifndef BOOT_H
 #define BOOT_H
 
+#include "types.h"
+
 #define MULTIBOOT_TAG_TYPE_END 0
 #define MULTIBOOT_TAG_TYPE_CMD_LINE 1
 #define MULTIBOOT_TAG_TYPE_BOOTLOADER_NAME  2

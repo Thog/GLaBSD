@@ -1,5 +1,5 @@
 NAME=moe
-SRCDIRS = boot drivers src
+SRCDIRS =  $(wildcard src/*)
 
 $(foreach dir,$(SRCDIRS),$(eval include $(dir)/make.config))
 
