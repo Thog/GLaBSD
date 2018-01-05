@@ -6,11 +6,16 @@ $(foreach dir,$(SRCDIRS),$(eval include $(dir)/make.config))
 ARCH = i686-elf
 YASM_FORMAT = elf32
 
-CC = $(ARCH)-gcc
-AS = $(ARCH)-gcc
+CC = clang
+CXX = clang++
+AS = llvm-mc
+
+#TODO: Switch to ld.lld
+LD = $(ARCH)-gcc
 YASM = yasm
-CFLAGS = -Wall -Wextra -Werror -Iincludes -std=gnu11 -g -ffreestanding -D SERIAL_LOGGING
-LDFLAGS = -nostdlib -n -T linker.ld -ffreestanding -O2 -Wl,--print-map
+CC_FLAGS = -target i686-pc-none-elf -march=i686 -nostdlib -nostdlibinc -Wall -Wextra -Iincludes -std=gnu11 -g -ffreestanding -D SERIAL_LOGGING
+CFLAGS=$(CC_FLAGS)
+LDFLAGS = -nostdlib -T linker.ld 
 
 %.o: %.c
 	@echo "kernel> Building $<"
@@ -25,9 +30,10 @@ LDFLAGS = -nostdlib -n -T linker.ld -ffreestanding -O2 -Wl,--print-map
 	@$(YASM) -g dwarf2 -f $(YASM_FORMAT) $< -o $@
 
 $(NAME).bin: $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) -lgcc
+	@echo "kernel> Linking"
+	@$(LD) $(LDFLAGS) -o $@ $(OBJS) -lgcc
 
-all: $(NAME).bin
+all: iso
 
 clean:
 	@rm -f $(OBJS) $(NAME).bin $(NAME).iso
@@ -44,3 +50,5 @@ iso: $(NAME).bin
 	@echo "Creating ISO..."
 	@grub-mkrescue -o $(NAME).iso isodir
 	@echo "Build complete!"
+
+re: clean all

@@ -5,13 +5,13 @@ extern __va_start__
 global _start
 global page_flush
 global jump_to_virtual
-global page_directory
+global first_page_entry
 global _start_debug
 
 ; page directory
 section .data
 align 0x1000
-page_directory:
+first_page_entry:
     dd 0x83
     times (1023) dd 0
 
@@ -35,7 +35,7 @@ _start:
     push ebx
 
     ; calculate page_directory physical position
-    lea ecx, [page_directory]
+    lea ecx, [first_page_entry]
     sub ecx, __va_start__
 
     ; calculate page directory index of the virtual address

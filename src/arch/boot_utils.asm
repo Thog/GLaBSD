@@ -1,6 +1,7 @@
 section .text
 
 extern gdt_ptr
+extern __va_start__
 
 global gdt_flush
 

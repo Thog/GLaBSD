@@ -5,22 +5,16 @@ extern remap_interrupts
 extern mask_interrupts
 extern init_gdt
 extern main
-extern page_directory
+extern first_page_entry
 extern __va_start__
 extern set_kernel_virtual_start
 
 _start_virtual:
     ; unmap the first identity page
-    mov dword [page_directory], 0
+    mov dword [first_page_entry], 0
     invlpg [0]
 
     push eax ; backup multiboot magic
-
-    ; setup the screen va_start
-    lea eax, [__va_start__]
-    push eax
-    call set_kernel_virtual_start
-    add esp, 4
 
     ; remap interrupts
     call remap_interrupts
@@ -28,7 +22,7 @@ _start_virtual:
     ; mask interrupts
     call mask_interrupts
 
-    ; setup GDT
+    ; setup GDT (FIXME: CAN'T DO THAT AFTER PAGING IT SHOULD BE IN THE STAGE1)
     call init_gdt
 
     pop eax ; restore multiboot magic

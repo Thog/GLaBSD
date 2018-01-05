@@ -17,3 +17,18 @@ s32 strcmp(char *s1, char *s2)
     }
     return (*s1 - *s2);
 }
+
+void *memset(void *s, int c, size_t n)
+{
+	unsigned char *str;
+
+	str = (unsigned char *)s;
+    while (n--)
+    {
+        /*printk_int(str, BASE_16);
+        printk("\n");*/
+        *str++ = c;
+    }
+		
+    return (s);
+}

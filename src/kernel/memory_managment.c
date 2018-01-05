@@ -3,14 +3,17 @@
 multiboot2_mmap_t *memory_mapping;
 void *va_start = NULL;
 
-void set_kernel_virtual_start(void *addr)
-{
-    va_start = addr;
-}
+extern u32 __va_start__;
+extern u32 __va_end__;
 
 void *get_kernel_base(void)
 {
-    return va_start;
+    return &__va_start__;
+}
+
+void *get_kernel_end(void)
+{
+    return &__va_end__;
 }
 
 void memory_managment_init(void)
@@ -21,10 +24,13 @@ void memory_managment_init(void)
         printk("NO MEMORY MAPPING PROVIDED, ABORT\n");
         // panic();
     }
+
+    setup_frames(memory_mapping);
 }
 
 void print_multiboot_memory_mapping(void)
 {
+    memory_mapping = (multiboot2_mmap_t*) get_multiboot_tag(MULTIBOOT_TAG_TYPE_MMAP);
     multiboot2_mmap_entry_t *entry = (multiboot2_mmap_entry_t*) memory_mapping->entries;
     u64 end_addr;
     printk("====== MEMORY MAPPING ======\n");

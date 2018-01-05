@@ -32,7 +32,7 @@ SECTIONS
 	}
 
 	/* R/W data */
-	.data ALIGN(0x100) : AT(ADDR(.data) - __va_start__)
+	.data ALIGN(4K) : AT(ADDR(.data) - __va_start__)
 	{
 		*(.data)
 	}
@@ -53,4 +53,5 @@ SECTIONS
 	{
 		*(.comment)
 	}
+	PROVIDE(__va_end__ = .);
 }
