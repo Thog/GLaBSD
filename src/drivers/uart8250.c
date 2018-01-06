@@ -26,7 +26,6 @@ static int has_received_data(u16 port)
 char read_serial(u16 port)
 {
     while (!has_received_data(port));
- 
     return inb(port);
 }
 

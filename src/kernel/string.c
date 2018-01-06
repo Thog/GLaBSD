@@ -24,11 +24,12 @@ void *memset(void *s, int c, size_t n)
 
 	str = (unsigned char *)s;
     while (n--)
-    {
-        /*printk_int(str, BASE_16);
-        printk("\n");*/
         *str++ = c;
-    }
 		
     return (s);
+}
+
+void bzero(void *s, size_t n)
+{
+    memset(s, 0, n);
 }

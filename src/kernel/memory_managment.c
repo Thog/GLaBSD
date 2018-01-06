@@ -30,9 +30,12 @@ void memory_managment_init(void)
 
 void print_multiboot_memory_mapping(void)
 {
-    memory_mapping = (multiboot2_mmap_t*) get_multiboot_tag(MULTIBOOT_TAG_TYPE_MMAP);
-    multiboot2_mmap_entry_t *entry = (multiboot2_mmap_entry_t*) memory_mapping->entries;
+    multiboot2_mmap_entry_t *entry;
     u64 end_addr;
+
+    if (!memory_mapping)
+        return;
+    entry =  (multiboot2_mmap_entry_t*) memory_mapping->entries;
     printk("====== MEMORY MAPPING ======\n");
     while (entry < (multiboot2_mmap_entry_t*)((u8*)memory_mapping + memory_mapping->size))
     {

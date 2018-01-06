@@ -2,7 +2,8 @@
 
 void remap_interrupts(void)
 {
-    u8 pic1_data, pic2_data;
+    u8 pic1_data;
+    u8 pic2_data;
 
     // Save masks
     pic1_data = inb(PIC1_DATA);

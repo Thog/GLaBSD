@@ -25,7 +25,7 @@ stack_top:
 section .boot
 _start:
 
-    ; quick setup a temp stack
+    ; quick setup of a temp stack
     lea ecx, [stack_top]
     sub ecx, __va_start__
     mov esp, ecx

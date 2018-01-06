@@ -9,8 +9,11 @@ static inline void flush_tlb_single(u32 addr)
 
 void mmu_print_page_directory(void)
 {
-    u32 *dir = (u32*)&first_page_entry;
-    u32 i = 0;
+    u32 *dir;
+    u32 i;
+
+    dir = (u32*)&first_page_entry;
+    i = 0;
     while (i < 1024)
     {
         printk("Page ");
@@ -25,8 +28,9 @@ void mmu_print_page_directory(void)
 
 void *mmu_map_page(void *phys, void *virt, u32 is_user, u32 writable)
 {
-    u32 pdindex = (u32)virt >> 22 & 0x03FF;
-    page_directory_t *entry = &first_page_entry + pdindex;
+    page_directory_t *entry;
+
+    entry = &first_page_entry + ((u32)virt >> 22);
     entry->addr = ((u32)phys) >> 12;    
     entry->user = is_user == 1;
     entry->size = 1; // TODO: use page tables to map 4KB (we are mapping 4MB for now)
@@ -37,8 +41,9 @@ void *mmu_map_page(void *phys, void *virt, u32 is_user, u32 writable)
 
 void mmu_unmap_page(void *virt)
 {
-    u32 pdindex = (u32)virt >> 22 & 0x03FF;
-    u32 *entry = (u32*)(&first_page_entry + pdindex);
+    u32 *entry;
+
+    entry = (u32*)(&first_page_entry +  ((u32)virt >> 22));
     *entry = 0;
     flush_tlb_single((u32)virt);
 }

@@ -22,7 +22,7 @@ _start_virtual:
     ; mask interrupts
     call mask_interrupts
 
-    ; setup GDT (FIXME: CAN'T DO THAT AFTER PAGING IT SHOULD BE IN THE STAGE1)
+    ; setup GDT
     call init_gdt
 
     pop eax ; restore multiboot magic
