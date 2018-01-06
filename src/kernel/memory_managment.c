@@ -24,7 +24,8 @@ void memory_managment_init(void)
         printk("NO MEMORY MAPPING PROVIDED, ABORT\n");
         // panic();
     }
-
+    print_multiboot_memory_mapping();
+    mmu_init();
     setup_frames(memory_mapping);
 }
 

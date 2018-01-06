@@ -10,9 +10,8 @@ void setup_frames(multiboot2_mmap_t *memory_mapping)
     u64 end_addr;
 
     entry = (multiboot2_mmap_entry_t*) memory_mapping->entries;
-     // We assume that the system has at least 12MB of ram
-    frames_start = mmu_map_page((void*)0x400000, get_kernel_base() + 0x400000, 0, 1);
-    mmu_map_page((void*)0x800000, get_kernel_base() + 0x800000, 0, 1);
+
+    frames_start = get_kernel_base() + 0x800000;
     frames_end = frames_start;
 
     // Clean up 8MB
