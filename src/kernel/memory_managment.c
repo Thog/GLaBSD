@@ -27,6 +27,7 @@ void memory_managment_init(void)
     print_multiboot_memory_mapping();
     mmu_init();
     setup_frames(memory_mapping);
+    virt_init();
 }
 
 void print_multiboot_memory_mapping(void)

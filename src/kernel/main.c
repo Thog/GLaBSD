@@ -1,8 +1,6 @@
 #include "kernel.h"
 
-extern multiboot2_t *multiboot_data;
-
-int main(u32 magic, multiboot2_t *data)
+int main(u32 magic, multiboot2_t *multiboot_data)
 {
     init_serial(COM1);
     printk("Serial COM1 started\n");
@@ -13,10 +11,10 @@ int main(u32 magic, multiboot2_t *data)
         // panic();
         return (0);
     }
-    fix_multiboot_tags(data);
+    fix_multiboot_tags(multiboot_data);
     screen_init();
 
     memory_managment_init();
-    printk("Hello from kernel main :)\n");
+    printk("\nHello from kernel main :)\n");
     return (0);
 }

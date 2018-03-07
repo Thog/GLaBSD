@@ -25,7 +25,7 @@ void setup_frames(multiboot2_mmap_t *memory_mapping)
             for (u32 addr = entry->base_addr; addr < end_addr; addr += PAGE_SIZE)
             {
                 frames_end->addr = addr >> 12;
-                frames_end->free = addr >= 0xC00000;
+                frames_end->free = addr >= 0x1000000;
                 frames_end++;
             }
         }
@@ -53,7 +53,7 @@ void print_frames(void)
     frame = frames_start;
     while (frame != frames_end)
     {
-        if (frame->free == 0 && (frame->addr << 12) >= 0xC00000)
+        if (frame->free == 0)
         {
             print_frame(frame);
         }

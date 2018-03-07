@@ -8,6 +8,7 @@
 #include "arch/gdt.h"
 #include "arch/mm/frames.h"
 #include "arch/mm/mmu.h"
+#include "arch/mm/virt_allocator.h"
 #include "arch/debugging.h"
 #include "drivers/pic.h"
 #include "drivers/vga_text_mode.h"
