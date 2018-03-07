@@ -34,10 +34,11 @@ void virt_init(void)
     void *kernel_base = get_kernel_base();
     // We take the another 4MB (20MB in total already in use TODO: rework everything here later)
     virt_meta_start = kernel_base + 0x1000000;
-    virt_meta_end = virt_meta_start + 0x400000;
+    virt_meta_end = (void*)((u32)virt_meta_start + 0x400000);
     next_addr = virt_meta_end;
-    void * phys_addr = frame_alloc(0x400000);
+    void *phys_addr = frame_alloc(0x400000);
     mmu_map_page(phys_addr, virt_meta_start, PAGING_RW | PAGING_4MB);
+    memset(virt_meta_start, 0, (u32)virt_meta_end - (u32)virt_meta_start);
     setup_new_mapping(virt_meta_start, phys_addr, kernel_base, virt_meta_end - kernel_base);
 }
 
@@ -75,6 +76,8 @@ void *kmmap(void *addr, size_t len)
 {
     if (((u32)len % PAGE_SIZE) || is_mapped(addr))
         return NULL;
+    if (len == 0)
+        len = PAGE_SIZE;
     void *phys_addr = frame_alloc(len);
     if (phys_addr == NULL)
         return NULL;
